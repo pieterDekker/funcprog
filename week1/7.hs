@@ -12,7 +12,7 @@ checkTakuzity ls
 
 recTakuzuStrings :: Int -> [Char] -> [[Char]]
 recTakuzuStrings n s
-  | n == 0                = [s]
+  | n == 0                  = [s]
   | checkTakuzity s == "1"  = recTakuzuStrings (n - 1) (s ++ "1")
   | checkTakuzity s == "01" = recTakuzuStrings (n - 1) (s ++ "0") ++
                             recTakuzuStrings (n - 1) (s ++ "1")

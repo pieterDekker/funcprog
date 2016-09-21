@@ -11,5 +11,9 @@ someLast2 string = [(someLast string)] ++ [(someScnLast string)]
 
 testString :: String -> Bool
 testString s = s == "Hoi"
-  {-| s == "Hoi" = True
-  | otherwise  = False-}
+
+testList :: [(Float, Float)]
+testList = [(4,2),(9,3),(16,4),(25,0),(36,0),(49,7)]
+
+listCompTest :: [(Float, Float)] -> [Float]
+listCompTest ips = [a / b | (a,b) <- ips, b > 0]
