@@ -1,27 +1,32 @@
 import Data.Char
 
-ctf :: Char -> (Int -> Int -> Int)
-ctf '+' = (+)
-ctf '-' = (-)
-ctf '*' = (*)
+ctf :: Int -> (Int -> Int -> Int)
+ctf (-1) = div
+ctf (-3) = (-)
+ctf (-5) = (+)
+ctf (-6) = (*)
 
-isOp :: Char -> Bool
-isOp c
-  | c == '+'      = True
-  | c == '-'      = True 
-  | c == '*'      = True
-  | otherwise     = False
-{-
+rpnHelper :: [Char] -> [IntS] -> [Int]
+rpnHelper (x:x2:xs) (ys)
+  | isNum x && isNum x2 = 
+
+rpnHelper (x:' ':xs) (y:ys) 
+  | isNum x     = rpnHelper xs (y * 10 + i x) :ys
+  | otherwise   = 
+    where i a = ord a - ord '0'
+    
+rpnHelper (x:xs) (y:ys) = rpnHelper xs (y * 10 + i x) : ys
+    where i a = ord a - ord '0'
+    
+rpnHelper [] ys = ys 
+
+rpnEvalRec :: [Int] -> Int
+rpnEvalRec (x:y:z:xs) = rpnEvalRec (((ctf z) x y) : xs)
+rpnEvalRec (x:[]) = x
+
 rpnEval :: [Char] -> Int
-rpnEval str = rpnHelper reverse[c | c <- str, isNumOp c]
--}
+rpnEval xs = rpnEvalRec (rpnHelper ([x | x <- xs, not (isSpace x)]) [])
 
-rpnEval :: [Char] -> [Char]
-rpnEval str = reverse[c | c <- str, isNumOp c]
+"355 65 +"
 
-rpnEval :: [Char] -> [Char] -> Int
-rpnEval (x:xs) (ys)
-  | isNumber x  = rpnEval xs (x:ys)
-  | isOp x      = 
 
-rpnEval [] _    = 0

@@ -10,15 +10,6 @@
     | n == 1       = True
     | n ` elem` list = False
     | otherwise   = isHappy (replace n)
-
-  countHappyNumbers :: Integer -> Integer -> Integer
-  countHappyNumbers a b
-    | a > b      = 0
-    | isHappy a   = 1 + countHappyNumbers (a + 1) b
-    | otherwise   = 0 + countHappyNumbers (a + 1) b
     
   countHappyNumbers2 :: Integer -> Integer -> Integer
   countHappyNumbers2 a b = sum [1 | x <- [a..b], isHappy x]
-
-  countHappyNumbers3 :: Integer -> Integer -> Int
-  countHappyNumbers3 a b = length [x | x <- [a..b], isHappy x]
