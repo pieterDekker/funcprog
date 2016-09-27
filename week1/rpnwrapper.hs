@@ -1,7 +1,5 @@
 import Data.Char
 
-{-     |5 1 2 + 4 * + 3 -|     -}
-
 isNum :: String -> Bool
 isNum [] = True
 isNum (x:xs) = (isDigit x) && (isNum xs)
@@ -18,3 +16,6 @@ rpnHelper ("-":xs) (x:y:stck) = rpnHelper xs (show ((-) (read y) (read x)) : stc
 rpnHelper ("*":xs) (x:y:stck) = rpnHelper xs (show ((*) (read y) (read x)) : stck)
 rpnHelper ("/":xs) (x:y:stck) = rpnHelper xs (show (div (read y) (read x)) : stck)
 
+
+
+main =  print . rpnEval =<< getLine
