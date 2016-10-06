@@ -2,6 +2,13 @@ primes :: [Integer]
 primes  =  sieve [2..]
   where
     sieve :: [Integer] -> [Integer]
+<<<<<<< HEAD
+    sieve (p:xs)  =  p : sieve [x | x <- xs, x `mod` p /= 0]
+
+
+-- Insert your own code here.
+composites :: [(Integer,[Integer])]
+=======
     sieve (p:xs)      =  p : sieve [x | x <- xs, x `mod` p /= 0]
 
 isPrime :: Integer -> Bool
@@ -21,6 +28,7 @@ compSieve (x:xs)
 -- Insert your own code here.
 composites :: [(Integer,[Integer])]
 composites = compSieve [4..]
+>>>>>>> 060ea4de83b47f92a3f38af63147af988d571505
 
 -- Do not change the following wrapper code
 wrapper :: String -> [(Integer,[Integer])]

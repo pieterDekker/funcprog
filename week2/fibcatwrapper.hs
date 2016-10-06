@@ -1,3 +1,10 @@
+<<<<<<< HEAD
+fibcats :: [Integer]
+-- Insert your own code here.
+
+
+
+=======
 join :: [Integer] -> [Integer] -> [Integer]
 join (x:xs) (y:ys) 
   | x < y       = x : join xs (y:ys)
@@ -20,6 +27,7 @@ catSeq = [cat i | i <- [2..]]
 
 fibcats :: [Integer]
 fibcats = 0:1:(join catSeq fibSeq)
+>>>>>>> 060ea4de83b47f92a3f38af63147af988d571505
 
 
 -- Do not change the following wrapper code
