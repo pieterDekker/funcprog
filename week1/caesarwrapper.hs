@@ -15,3 +15,16 @@ cipherEncode key str = codeHelper (-) key 1 str
 
 cipherDecode :: Int -> String -> String
 cipherDecode key str = codeHelper (+) key 1 str
+
+wrapper :: String -> String
+wrapper line
+  | cmd == "ENCODE"  = cipherEncode key txt
+  | cmd == "DECODE"  = cipherDecode key txt
+  where
+    str  = dropWhile (not.isAlpha) line
+    cmd  = takeWhile isAlpha str
+    tail = dropWhile (not.isDigit) str
+    key = read (takeWhile isDigit tail)::Int
+    txt = dropWhile (not.isAlpha) (dropWhile isDigit tail)
+
+main =  print . wrapper =<< getLine

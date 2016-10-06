@@ -10,5 +10,10 @@ isHappy n
   | otherwise   = isHappy (replace n)
     where list = [4,16,37,58,89,145,42,20]
     
-countHappyNumbers :: Integer -> Integer -> Integer
+countHappyNumbers :: Integer -> Integer -> Int
 countHappyNumbers a b = sum [1 | x <- [a..b], isHappy x]
+
+wrapper :: [String] -> Int
+wrapper (a:b:_) = countHappyNumbers (read a::Integer) (read b::Integer)
+
+main =  print . wrapper . words =<< getLine
