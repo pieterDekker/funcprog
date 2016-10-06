@@ -1,4 +1,5 @@
 selfrle :: [Int]
+<<<<<<< HEAD
 selfrle = recRlSeq [1,2,2] [1,2,2]
 
 options :: [Char] -> [Char]
@@ -11,6 +12,9 @@ recRlSeq xs seq
   | options xs seq == ""
   | options xs seq == ""
 
+=======
+-- Insert your own code here.
+>>>>>>> 060ea4de83b47f92a3f38af63147af988d571505
 
 
 
