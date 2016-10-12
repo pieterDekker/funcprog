@@ -1,16 +1,31 @@
-removables :: [Integer]
-removables = [i + j + (2 * i * j) | j <- [1..], i <- [1..j]]
+{-# OPTIONS_GHC -O2 #-}
+-- compiled execution time for 100001 is 0.877s (about 27% better)
 
-removList :: [Integer]
-removList  = 4:7:removables
+marked :: [Integer]
+marked = fold $ map mark [1..]
+    where
+        fold ((x:xs):t) = x : (xs `union` fold t)
+        mark i = map (calc i) [i..]
+        calc i j = i + j + 2*i*j
 
-isRemovable :: Integer -> Bool
-isRemovable n = elem n [i + j + (2 * i * j) | let n'=fromIntegral n,
-                                               i<-[1..floor (sqrt (n' / 2))],
-                                               let i' = fromIntegral i,
-                                               j<-[i..floor( (n'-i')/(2*i'+1))]]
-                                               
-primes = 2 : [(2 * n) + 1 | n <- [1..], not (isRemovable n)]
+union :: [Integer] -> [Integer] -> [Integer]
+union a         []        = a
+union []        b         = b
+union (x:xs) (y:ys)
+    | x < y     = x : union xs (y:ys)
+    | x == y    = x : union xs ys
+    | otherwise = y : union (x:xs) ys
+
+removeComposites :: [Integer] -> [Integer] -> [Integer]
+removeComposites [] _          = []
+removeComposites (s:ss) []     = 2*s + 1 : removeComposites ss []
+removeComposites (s:ss) (c:cs)
+    | s == c    = removeComposites ss cs
+    | s > c     = removeComposites (s:ss) cs
+    | otherwise = 2*s + 1 : removeComposites ss (c:cs)
+
+primes :: [Integer]
+primes = 2:(removeComposites [1..] marked)
 
 -- Do not change the following wrapper code
 wrapper :: String -> [Integer]

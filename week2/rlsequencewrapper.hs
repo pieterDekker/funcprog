@@ -1,24 +1,15 @@
+put :: Int -> Int -> [Int]
+put x 0 = []
+put x n = x : put x (n-1)
+
+helpseq :: [Int]
+helpseq = 1 : map (\n -> 3 - n) helpseq
+
+superZip :: (Int -> Int -> [Int]) -> [Int] -> [Int] -> [Int]
+superZip f (x:xs) (y:ys) = (f x y) ++ (superZip f xs ys)
+
 selfrle :: [Int]
-<<<<<<< HEAD
-selfrle = recRlSeq [1,2,2] [1,2,2]
-
-options :: [Char] -> [Char]
-
-
--- xs is the list with x1 , x2 and x3
-
-recRlSeq :: [Int] -> [Int] -> [Int]
-recRlSeq xs seq
-  | options xs seq == ""
-  | options xs seq == ""
-
-=======
--- Insert your own code here.
->>>>>>> 060ea4de83b47f92a3f38af63147af988d571505
-
-
-
-
+selfrle = 1 : 2 : 2 : superZip put helpseq (tail (tail selfrle))
 
 -- Do not change the fololowing wrapper code
 wrapper :: String -> [Int]
