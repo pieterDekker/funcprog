@@ -56,19 +56,19 @@ eval (p :*: q) vs   = (eval p vs) * (eval q vs)
 eval (p :/: q) vs   = (eval p vs) `div` (eval q vs)
 eval (p :%: q) vs   = (eval p vs) `mod` (eval q vs)
 
---valuate :: (Name, Domain) -> Valuation
---valuate (nm, dom) = [(nm, val) | val <- dom]
+valuations :: [(Name, Domain)] -> [Valuation]
+valuations [] = []
+valuations ((nm,dom):[]) = [[(nm,val)] | val <- dom]
+valuations ((nm, dom) : nmdoms) = [(nm,val):vals| (nm,val) <- [(nm, val) | val <- dom], vals <- (valuations nmdoms)]
 
---valuateAll :: [(Name, Domain)] -> [Valuation]
---valuateAll nmdoms = [valuate (nm, dom) | (nm, dom) <- nmdoms]
-
---valuationsHelper :: [Valuation] -> [Valuation]
---valuationsHelper ([] : valss) = (valuationsHelper valss)
---valuationsHelper ((val:vals) : valss) = [[val]] ++ (valuationsHelper (valss)) ++ valuationsHelper (vals : valss)
-
---valuations :: [(Name, Domain)] -> [Valuation]
---valuations ((nm, []) : vs) = valuations vs
---valuations ((nm, dom) : vs) = 
+pytriples n = filter check (valuations [("a",[1..n]),("b",[1..n]),("c",[1..n])])
+  where check valuation = ((asqrd valuation + bsqrd valuation) == csqrd valuation) && (a valuation <= b valuation)
+        asqrd valuation = evalExpr (Var "a" :*: Var "a") valuation
+        bsqrd valuation = evalExpr (Var "b" :*: Var "b") valuation
+        csqrd valuation = evalExpr (Var "c" :*: Var "c") valuation
+        a valuation = sure(lookup "a" valuation)
+        b valuation = sure(lookup "b" valuation)
+        sure (Just b) = b
 
 isOp :: Char -> Bool
 isOp '+' = True
@@ -76,10 +76,9 @@ isOp '-' = True
 isOp '*' = True
 isOp '/' = True
 isOp '%' = True
+isOp '(' = True
+isOp ')' = True
 isOp _   = False
-
-isNum :: Char -> Bool
-isNum c = ord c >= ord '0' && ord c <=  ord '9'
 
 tokenize :: String -> [String]
 tokenize [] = []
@@ -87,6 +86,48 @@ tokenize (c:str)
   | c == ' '    = tokenize str
   | isAlpha c   = [c: (takeWhile (isAlphaNum) str)] ++ (tokenize (dropWhile (isAlphaNum) str))
   | isOp c      = [[c]] ++ tokenize str
-  | isNum c     = [c: (takeWhile (isNum) str)] ++ (tokenize (dropWhile (isNum) str))
+  | isDigit c     = [c: (takeWhile (isDigit) str)] ++ (tokenize (dropWhile (isDigit) str))
   | otherwise   = error "Parse error"
+  
+toExpr :: String -> Expr
+toExpr string = fst (parseE (tokenize string))
+  
+parseE :: [String] -> (Expr, [String])
+parseE tokens = (accE', accTokens)
+  where (accT, accToks) = parseT tokens
+        (accE', accTokens) = parseE' accT accToks
 
+parseE' :: Expr -> [String] -> (Expr, [String])
+parseE' exp ("+":tokens) = ((exp :+: accE'), accE'tokens)
+  where (accT, accToks) = parseT tokens
+        (accE', accE'tokens) = parseE' accT accToks
+parseE' exp ("-":tokens) = ((exp :-: accE'), accE'tokens)
+  where (accT, accToks) = parseT tokens
+        (accE', accE'tokens) = parseE' accT accToks
+parseE' exp tokens = (exp, tokens)
+
+parseT :: [String] -> (Expr, [String])
+parseT tokens = (accT', accTokens)
+  where (accF, accToks) = parseF tokens
+        (accT', accTokens) = parseT' accF accToks
+
+parseT' :: Expr -> [String] -> (Expr, [String])
+parseT' exp ("*":tokens) = ((exp :*: accT'), accT'tokens)
+  where (accF, accToks) = parseF tokens
+        (accT', accT'tokens) = parseT' accF accToks
+parseT' exp ("/":tokens) = ((exp :/: accT'), accT'tokens)
+  where (accF, accToks) = parseF tokens
+        (accT', accT'tokens) = parseT' accF accToks
+parseT' exp ("%":tokens) = ((exp :%: accT'), accT'tokens)
+  where (accF, accToks) = parseF tokens
+        (accT', accT'tokens) = parseT' accF accToks        
+parseT' exp tokens = (exp, tokens)
+
+parseF :: [String] -> (Expr, [String])
+parseF ("(":tokens) = ((accE), accTokens)
+  where (accEs, accToks) = parseE tokens
+        (accE, accTokens) = (accEs, (drop 1 accToks))
+parseF (t:tokens)
+  | isDigit (head t)  = (Val (read t), tokens)
+  | isAlpha (head t)  = (Var t, tokens)
+  | otherwise         = error "syntax error"
